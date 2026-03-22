@@ -1,2 +1,6 @@
-import GoogleProvider from "next-auth/providers/google";    
-import { NextAuthOptions } from "next-auth";
+// lib/auth.ts
+import { getServerSession } from "next-auth"
+
+export async function getSession() {
+  return await getServerSession()
+}
