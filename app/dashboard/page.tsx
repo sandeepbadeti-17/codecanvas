@@ -1,13 +1,22 @@
-// app/dashboard/page.tsx
-
-import { getSession } from "@/lib/auth"
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 
 export default async function Dashboard() {
-  const session = await getSession()
+  // const session = await getServerSession();
+    const { data: session } = useSession()
 
   if (!session) {
-    return <div>Not logged in</div>
+    redirect("/login");
   }
 
-  return <div>Welcome {session.user?.name}</div>
+  return (
+    <div>
+      Welcome to Dashboard
+      <>
+        <p>{session.user.email}</p>
+        <button onClick={() => signOut()}>Logout</button>
+      </>
+    </div>
+  );
 }
