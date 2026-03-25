@@ -52,7 +52,7 @@ export default function Home() {
                 <Label>Email address</Label>
                 <Input
                   type="email"
-                  placeholder="name@company.com"
+                  placeholder="name@company.com" required 
                 />
               </div>
 
@@ -71,7 +71,7 @@ export default function Home() {
                 <div className="relative">
                   <Input
                     type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    placeholder="••••••••" required min={8}
                   />
                   <button
                     type="button"

@@ -1,17 +1,16 @@
-// // lib/db.ts
+// import { prisma } from "./generated/prisma"; // adjust path
+import { prisma } from "./prisma"; // adjust path
 
-import { PrismaClient } from "@/lib/generated/prisma"
-
-const globalForPrisma = global as unknown as {
-  prisma: PrismaClient
+async function main() {
+  const users = await prisma.user.findMany();
+  console.log(users, "users");
 }
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: ["query"], // optional (for debugging)
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
   })
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma
-}
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
