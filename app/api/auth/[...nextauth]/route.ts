@@ -1,8 +1,7 @@
 import NextAuth, { DefaultSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-// import { PrismaAdapter } from "@auth/prisma-adapter";
-// import { PrismaClient } from "@/lib/generated/prisma";
+import { prisma } from "@/lib/prisma";
 
 
 
@@ -32,7 +31,7 @@ declare module "next-auth/jwt" {
 
 // const prisma = new PrismaClient();
 
-const handler = NextAuth({
+const authOptions = NextAuth({
   // adapter: PrismaAdapter(prisma),
 
   providers: [
@@ -55,28 +54,21 @@ const handler = NextAuth({
   },
 
   callbacks: {
-    async jwt({ token, account, profile }) {
-      // 🔑 Runs on login + every request
-      // 👉 Only set values on initial login (when account exists)
+    async jwt({ token, user, account }: any) {
+      // 👉 Runs after signIn
 
+      if (user) {
+        // 🔥 This must be DB user id
+        console.log("JWT USER ID:", user.id); // 👈 check this
+        token.id = user.id;
+        token.email = user.email;
+      }
       if (account) {
         token.accessToken = account.access_token
-
-        // ⚠️ Different providers return different user IDs
-        // Google → sub | GitHub → id
-        if (account.provider === "google") {
-          token.id = (profile as { sub?: string })?.sub
-        }
-
-        if (account.provider === "github") {
-          token.id = (profile as { id?: number })?.id?.toString()
-        }
       }
 
-      // 🧠 JWT is the source of truth → data stored here persists across requests
-      return token
+      return token;
     },
-
     async session({ session, token }) {
       // 🔁 Runs whenever session is accessed (frontend: useSession)
       if (session.user && token.id) {
@@ -90,7 +82,66 @@ const handler = NextAuth({
       // 🎯 Session = filtered view of JWT (what we expose to frontend)
       return session
     },
+
+    async signIn({ user, account }: any) {
+
+      if (!account) return false
+
+      //safty check
+      if (!user.email) {
+        console.log("Email is required")
+        return false
+      }
+
+      // 1 Check if user already exists in DB
+      let existingUser = await prisma.user.findUnique({
+        where: { email: user.email }
+      });
+
+      //2 create if not exists
+      if (!existingUser) {
+        existingUser = await prisma.user.create({
+          data: {
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            image: user.image
+          }
+        })
+      }
+
+      // 3) Link account if not exists
+      const existingAccount = await prisma.account.findFirst({
+        where: {
+          provider: account.provider,
+          providerAccountId: account.providerAccountId
+        }
+      });
+
+      if (!existingAccount) {
+        await prisma.account.upsert({
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+            },
+          },
+          update: {},
+          create: {
+            userId: existingUser.id,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            type: account.type,
+          },
+        });
+      }
+
+      user.id = existingUser.id
+
+      return true
+    }
+
   },
 });
 
-export { handler as GET, handler as POST };
+export { authOptions as GET, authOptions as POST };

@@ -9,7 +9,7 @@ export default async function Home() {
       {users.map((user) => (
         <div key={user.id} style={{ marginBottom: "10px" }}>
           <p>
-            <strong>Name:</strong> {user.name}
+            <strong>Name:</strong> {user.firstName} {user.lastName}
           </p>
           <p>
             <strong>Email:</strong> {user.email}

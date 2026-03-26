@@ -13,7 +13,7 @@ export default function Home() {
         <>
           <p>{session.user?.email}</p>
           <button onClick={() => signOut()}>Logout</button>
-          <h1>Welcome back, {session?.accessToken}!</h1>
+          <h1>Welcome back, {session?.accessToken}! </h1>
         </>
       ) : (
         <>
