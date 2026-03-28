@@ -1,11 +1,11 @@
-type Props = {
+type ToolbarProps = {
   editMode: boolean
-  setEditMode: React.Dispatch<React.SetStateAction<boolean>>
+  setEditMode: (val: boolean) => void
   saveNote: () => void
   discardChanges: () => void
   deleteNote: () => void
+  loading: boolean  // ✅ add this
 }
-
 
 export default function Toolbar({
   editMode,
@@ -13,7 +13,7 @@ export default function Toolbar({
   saveNote,
   discardChanges,
   deleteNote
-}: Props) {
+}: ToolbarProps) {
   return (
     <div className="flex justify-between mb-4">
       <div>

@@ -3,6 +3,6 @@ export type Note = {
   title: string | null
   content: string
   userId: string
-  createdAt: string
-  updatedAt: string
+  createdAt: Date
+  updatedAt: Date
 }

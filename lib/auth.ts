@@ -26,36 +26,43 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user, account }: any) {
-      // 👉 Runs after signIn
-
+    async jwt({ token, user }) {
       if (user) {
-        // 🔥 This must be DB user id
-        console.log("JWT USER ID:", user.id); // 👈 check this
-        token.id = user.id;
-        token.email = user.email;
-      }
-      if (account) {
-        token.accessToken = account.access_token
+        // Only runs on first login — store DB profile in token
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { id: true,email: true, firstName: true, lastName: true, image: true }
+        })
+
+        if (dbUser) {
+          token.id = dbUser.id
+          token.email = dbUser.email
+          token.firstName = dbUser.firstName
+          token.lastName = dbUser.lastName
+          token.image = dbUser.image
+        }
       }
 
-      return token;
+      return token
     },
+
     async session({ session, token }) {
-      // 🔁 Runs whenever session is accessed (frontend: useSession)
       if (session.user && token.id) {
-        // session.user.id = token.id
-        session.user.id = token.id
+        session.user.id = token.id as string
+        session.user.email = token.email as string
+        // ✅ Read from token (cached), not DB on every request
+        session.user.name = [token.firstName, token.lastName]
+          .filter(Boolean)
+          .join(" ")
+        session.user.image = token.image as string
       }
 
       if (token.accessToken) {
         session.accessToken = token.accessToken
       }
 
-      // 🎯 Session = filtered view of JWT (what we expose to frontend)
       return session
     },
-
     async signIn({ user, account }: any) {
 
       if (!account) return false
@@ -73,11 +80,14 @@ export const authOptions: NextAuthOptions = {
 
       //2 create if not exists
       if (!existingUser) {
+        const nameParts = user.name?.split(" ") ?? []
+        const firstName = nameParts[0] ?? null
+        const lastName = nameParts.slice(1).join(" ") ?? null  // handles middle names too
         existingUser = await prisma.user.create({
           data: {
             email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            firstName,
+            lastName,
             image: user.image
           }
         })
@@ -108,7 +118,6 @@ export const authOptions: NextAuthOptions = {
           },
         });
       }
-
       user.id = existingUser.id
 
       return true

@@ -1,44 +1,39 @@
-import { Note } from "@/types/notes";
-import { useState } from "react";
+"use client"
+import { Note } from "@/types/notes"
+import { useState } from "react"
+import { createNote } from "@/lib/actions/notes"  // ✅ server action
 
 type Props = {
-  notes: Note[];
-  selected: Note | null;
-  setSelected: React.Dispatch<React.SetStateAction<Note | null>>;
-  setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
-};
+  notes: Note[]
+  selected: Note | null
+  setSelected: React.Dispatch<React.SetStateAction<Note | null>>
+  setNotes: React.Dispatch<React.SetStateAction<Note[]>>
+}
 
-export default function NotesList({
-  notes,
-  selected,
-  setSelected,
-  setNotes,
-}: Props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+export default function NotesList({ notes, selected, setSelected, setNotes }: Props) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [title, setTitle] = useState("")
+  const [content, setContent] = useState("")
+  const [loading, setLoading] = useState(false)  // ✅ loading state
 
-  const createNote = async () => {
-    if (!title.trim()) return;
+  const handleCreate = async () => {
+    if (!title.trim()) return
 
-    const res = await fetch("/api/notes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, content }),
-    });
+    setLoading(true)
+    try {
+      const newNote = await createNote({ title, content })  // ✅ direct server action
 
-    const newNote = await res.json();
-
-    setNotes((prev) => [newNote, ...prev]);
-    setSelected(newNote);
-
-    // reset + close
-    setTitle("");
-    setContent("");
-    setIsOpen(false);
-  };
+      setNotes(prev => [newNote, ...prev])
+      setSelected(newNote)
+      setTitle("")
+      setContent("")
+      setIsOpen(false)
+    } catch (err) {
+      console.error("Failed to create note:", err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="w-1/3 border-r p-4 bg-white shadow-sm">
@@ -84,26 +79,23 @@ export default function NotesList({
 
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => {
-                  setIsOpen(false);
-                  setTitle("");
-                  setContent("");
-                }}
+                onClick={() => { setIsOpen(false); setTitle(""); setContent("") }}
                 className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200"
               >
                 Cancel
               </button>
 
               <button
-                onClick={createNote}
-                className="px-4 py-2 bg-black text-white rounded-lg hover:opacity-90"
+                onClick={handleCreate}
+                disabled={loading}
+                className="px-4 py-2 bg-black text-white rounded-lg hover:opacity-90 disabled:opacity-50"
               >
-                Create
+                {loading ? "Creating..." : "Create"}  {/* ✅ loading feedback */}
               </button>
             </div>
           </div>
         </div>
       )}
     </div>
-  );
+  )
 }
