@@ -1,6 +1,7 @@
+"use client"
 import { useState, useEffect } from "react"
-// import Toolbar from "./Toolbar"
 import { Note } from "@/types/notes"
+import { updateNote, deleteNote } from "@/lib/actions/notes"  // ✅ server actions
 import Toolbar from "./toolbar"
 
 type Props = {
@@ -11,7 +12,8 @@ type Props = {
 
 export default function NoteEditor({ selected, setSelected, setNotes }: Props) {
   const [editMode, setEditMode] = useState(false)
-  const [draft, setDraft] = useState(selected)
+  const [draft, setDraft] = useState<Note | null>(selected)
+  const [loading, setLoading] = useState(false)  // ✅ loading state
 
   useEffect(() => {
     setDraft(selected)
@@ -23,29 +25,35 @@ export default function NoteEditor({ selected, setSelected, setNotes }: Props) {
   }
 
   const saveNote = async () => {
-    const res = await fetch("/api/notes", {
-      method: "PATCH",
-      body: JSON.stringify(draft)
-    })
+    setLoading(true)
+    try {
+      const updated = await updateNote(draft.id, {  // ✅ direct server action
+        title: draft.title ?? undefined,
+        content: draft.content
+      })
 
-    const updated = await res.json()
-
-    setNotes(prev =>
-      prev.map(n => (n.id === updated.id ? updated : n))
-    )
-
-    setSelected(updated)
-    setEditMode(false)
+      setNotes(prev => prev.map(n => n.id === updated.id ? updated : n))
+      setSelected(updated)
+      setEditMode(false)
+    } catch (err) {
+      console.error("Failed to save note:", err)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const deleteNote = async () => {
-    await fetch("/api/notes", {
-      method: "DELETE",
-      body: JSON.stringify({ id: draft.id })
-    })
+  const handleDelete = async () => {
+    setLoading(true)
+    try {
+      await deleteNote(draft.id)  // ✅ direct server action
 
-    setNotes(prev => prev.filter(n => n.id !== draft.id))
-    setSelected(null)
+      setNotes(prev => prev.filter(n => n.id !== draft.id))
+      setSelected(null)
+    } catch (err) {
+      console.error("Failed to delete note:", err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const discardChanges = () => {
@@ -60,22 +68,23 @@ export default function NoteEditor({ selected, setSelected, setNotes }: Props) {
         setEditMode={setEditMode}
         saveNote={saveNote}
         discardChanges={discardChanges}
-        deleteNote={deleteNote}
+        deleteNote={handleDelete}
+        loading={loading}          // ✅ pass loading to toolbar for button states
       />
 
       <input
-        disabled={!editMode}
+        disabled={!editMode || loading}
         value={draft.title || ""}
         onChange={e => setDraft({ ...draft, title: e.target.value })}
-        className="text-2xl font-semibold w-full mb-4 outline-none"
+        className="text-2xl font-semibold w-full mb-4 outline-none disabled:opacity-70"
         placeholder="Title"
       />
 
       <textarea
-        disabled={!editMode}
+        disabled={!editMode || loading}
         value={draft.content}
         onChange={e => setDraft({ ...draft, content: e.target.value })}
-        className="w-full h-[70%] outline-none resize-none text-gray-700"
+        className="w-full h-[70%] outline-none resize-none text-gray-700 disabled:opacity-70"
         placeholder="Write your note..."
       />
     </div>

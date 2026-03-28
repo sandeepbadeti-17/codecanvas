@@ -31,7 +31,7 @@ export const authOptions: NextAuthOptions = {
         // Only runs on first login — store DB profile in token
         const dbUser = await prisma.user.findUnique({
           where: { id: user.id },
-          select: { id: true,email: true, firstName: true, lastName: true, image: true }
+          select: { id: true, email: true, firstName: true, lastName: true, image: true }
         })
 
         if (dbUser) {
