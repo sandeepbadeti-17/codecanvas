@@ -17,3 +17,7 @@ declare const globalThis: {
 const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
 if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma;
 export { prisma };
+
+export const prismaAuth = new PrismaClient({ 
+  adapter: new PrismaPg({ connectionString }) 
+});
