@@ -23,12 +23,6 @@ export default function Home() {
     setSent(true)
   }
 
-  console.log({
-  host: process.env.EMAIL_SERVER_HOST,
-  port: process.env.EMAIL_SERVER_PORT,
-  user: process.env.EMAIL_SERVER_USER,
-  pass: process.env.EMAIL_SERVER_PASSWORD,
-});
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
