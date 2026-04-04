@@ -92,7 +92,7 @@ if (status === "loading" || !session || session.user?.name) {
                   </Label>
                   <Input
                     type="text"
-                    placeholder="Sandeep"
+                    placeholder="Enter your first name"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     autoFocus
@@ -109,7 +109,7 @@ if (status === "loading" || !session || session.user?.name) {
                   </Label>
                   <Input
                     type="text"
-                    placeholder="Badeti"
+                    placeholder="Enter your last name"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                   />
@@ -148,7 +148,7 @@ if (status === "loading" || !session || session.user?.name) {
                 Terms
               </a>
             </div>
-            <p>© 2025 dev-lab</p>
+            <p>© 2026 dev-lab</p>
           </div>
         </footer>
       </div>
