@@ -45,7 +45,7 @@ Environment variables are required for authentication and database configuration
 
 ## 🌍 Live Demo
 
-*(Live demo will be added after deployment.)*
+*https://dev-canva.vercel.app/*
 
 ---
 
