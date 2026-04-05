@@ -6,6 +6,12 @@ import { prisma, prismaAuth } from "@/lib/prisma";
 import { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
+// Helper to capitalize the first letter of a string
+const capitalize = (str: string | null | undefined): string | null => {
+  if (!str) return null;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prismaAuth),
 
@@ -13,10 +19,20 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: "select_account",
+        },
+      },
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: "login", // forces GitHub to show login screen
+        },
+      },
     }),
     EmailProvider({
       server: {
@@ -131,8 +147,8 @@ export const authOptions: NextAuthOptions = {
       if (!existingUser) {
         // first time OAuth login → split name into firstName + lastName
         const nameParts = user.name?.split(" ") ?? [];
-        const firstName = nameParts[0] ?? null;
-        const lastName = nameParts.slice(1).join(" ") || null;
+        const firstName = capitalize(nameParts[0]) ?? null;
+        const lastName = capitalize(nameParts.slice(1).join(" ") || null);
 
         existingUser = await prisma.user.create({
           data: {

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Loader2, ArrowRight, User } from "lucide-react";
 import { saveProfile } from "@/lib/actions/user";
+import PageLoader from "@/components/page-loader";
 
 export default function OnboardingPage() {
   const { update, data: session, status } = useSession();
@@ -27,7 +28,7 @@ export default function OnboardingPage() {
 
 if (status === "loading" || !session || session.user?.name) {
   // here we can use loading component
-  return null;
+  return <PageLoader message="Setting things up..." />;
 }
 
   async function handleSubmit(e: React.FormEvent) {

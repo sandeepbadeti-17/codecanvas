@@ -28,7 +28,7 @@ export default function LogoutButton() {
              hover:bg-white 
              hover:shadow-lg
              active:scale-95
-             transition-all duration-200"
+             transition-all duration-200 hover:underline cursor-pointer"
     >
       {/* Avatar */}
       {image && !imgError ? (
