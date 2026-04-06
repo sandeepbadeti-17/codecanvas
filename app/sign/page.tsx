@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Github, Mail, ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -112,7 +113,9 @@ export default function Home() {
                           Connecting...
                         </>
                       ) : (
-                        "Continue with Google"
+                        <>
+                          <FcGoogle size={16} />Continue with Google
+                        </>
                       )}
                     </Button>
 
