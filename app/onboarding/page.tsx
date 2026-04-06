@@ -60,7 +60,7 @@ if (status === "loading" || !session || session.user?.name) {
         {/* Header */}
         <header className="fixed top-0 w-full z-50 backdrop-blur supports-[backdrop-filter]:bg-background/70 border-b">
           <div className="flex items-center px-6 py-4 max-w-6xl mx-auto">
-            <h1 className="text-lg font-semibold tracking-tight">dev-lab</h1>
+            <h1 className="text-lg font-semibold tracking-tight">Dev_Canva</h1>
           </div>
         </header>
 
