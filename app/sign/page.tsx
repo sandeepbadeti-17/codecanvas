@@ -186,7 +186,7 @@ export default function Home() {
               Legal
             </a>
           </div>
-          <p>© 2025 dev-lab</p>
+          <p>© 2026 dev-lab</p>
         </div>
       </footer>
     </div>
