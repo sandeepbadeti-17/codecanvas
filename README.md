@@ -1,90 +1,56 @@
-# 🚀 DevCanva
+# DevCanva
 
-A developer-focused platform designed to solve real-world problems around authentication, user lifecycle, and productivity tracking.
+> Developers grind across GitHub, LeetCode, and a dozen other platforms — but there's no single place that shows you the truth about your consistency. Most habit trackers let you lie to yourself. DevCanva doesn't.
 
-Built with a strong backend foundation to support future features like unified developer activity tracking across platforms.
+🚧 **In progress** — Phase 1 live: multi-provider auth with persistent data. Streak sync from GitHub & LeetCode coming next.
 
----
-
-## 🎥 Demo
-
-*(Video demo coming soon)*
-The application is fully functional with authentication, onboarding, and protected user flows.
+🔗 [Live Demo](https://dev-canva.vercel.app/)
 
 ---
 
-## 🧠 Why I Built This
-
-Developers work across multiple platforms like GitHub, LeetCode, and others — but there’s no unified system to reflect **actual daily progress**.
-
-Most tools either:
-
-* Track activity in isolation
-* Or rely on manual input
-
-This leads to inconsistency and lack of accountability.
-
-**DevCanva is an attempt to solve this — starting with a robust authentication and user management system, which serves as the foundation for future integrations and tracking features.**
+https://github.com/user-attachments/assets/f7cd07ef-c9bb-4ac9-b211-322d3026e486
 
 ---
 
-## 🧩 Problem Space
+## The problem
 
-Building a reliable system with multiple authentication providers introduces challenges like:
+Every habit tracker lets you manually check a box. You can log a "coding session" without writing a single line. You can fake a streak. The accountability is an illusion.
 
-* Handling multi-provider authentication (Email, Google, GitHub)
-* Preventing account duplication and data overwrites
-* Managing first-time user onboarding correctly
-* Maintaining consistent session state
-
-This project focuses on solving these problems in a scalable way.
+DevCanva pulls your actual activity — commits, submissions, platform data — so the streak is real, or it's zero. No self-reporting. No "I'll log it later."
 
 ---
 
-## ⚙️ Features
+## Where it is now
 
-* 🔐 Multi-provider authentication (Email, Google, GitHub)
-* 🧭 First-time user onboarding flow
-* 👤 Stable user persistence (no overwrites across providers)
-* 🛡️ Protected routes using middleware
-* 📝 Notes system (used to validate user-specific data persistence)
+Building this right means the foundation has to be solid. Phase 1 is a full authentication and user lifecycle system:
 
----
+- **Multi-provider auth** — login with Email, Google, or GitHub. No duplicate accounts, no data overwrites across providers
+- **First-time onboarding flow** — new users are detected and routed correctly every time
+- **Persistent notes** — added as a real data layer to prove user-specific persistence is working correctly before building anything on top of it
+- **Protected routes** — middleware-level session enforcement throughout
 
-## 🏗️ Tech Stack
-
-* Next.js
-* NextAuth
-* Prisma
-* PostgreSQL (Neon - serverless)
+The notes feature exists to validate the data layer before integrating external APIs.
 
 ---
 
-## 🌍 Live Demo
+## What's coming
 
-https://dev-canva.vercel.app/
+- **Platform sync** — GitHub & LeetCode to start. If it produces real activity data, it belongs here  
+- **Real streaks** — built entirely from platform activity (no manual input)  
+- **Consistency insights** — honest feedback on actual output  
+- **Roast mode** — for when you need the truth, not encouragement
 
 ---
 
-## 🛠️ Run Locally
+## Stack
+
+`Next.js` &nbsp; `NextAuth` &nbsp; `Prisma` &nbsp; `PostgreSQL (Neon)`
+
+---
+
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
-
----
-
-## 🚧 Future Scope
-
-* 📊 Unified developer activity tracking (GitHub, LeetCode, etc.)
-* 🔔 Smart notifications based on real activity
-* 🎯 Consistency and habit tracking system
-* 😈 Feedback system (motivational / roast-based insights)
-
----
-
-## 💡 Key Takeaway
-
-This project is not just about authentication —
-it’s about building a **scalable foundation for a developer productivity ecosystem.**
